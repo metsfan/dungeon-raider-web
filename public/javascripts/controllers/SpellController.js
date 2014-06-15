@@ -24,7 +24,7 @@ var SpellController = BaseController.extend({
         var spells = null
 
         reqs.push(Network.get("/spells/" + classId, function(data){
-            spells = new SpellCollection(data)
+            spells = new SpellCollection(data["spells"])
         }))
 
         Loader.show()
@@ -38,13 +38,13 @@ var SpellController = BaseController.extend({
     },
 
     editSpell: function(id, args) {
-        if (id > 0) {
+        if (id != "") {
             var spell = new Spell({"id" : id})
 
             Loader.show()
             $.when(spell.fetch()).then($.proxy(function(spell) {
                 this.render("ClassSpellEditView", {
-                    "spell" : spell,
+                    "spell" : spell["spell"],
                     "classData" : args.classData
                 });
 
@@ -55,7 +55,7 @@ var SpellController = BaseController.extend({
 
     createSpell: function(args) {
         var view = new ClassSpellEditView({
-            "spell" : new Spell({id : 0}),
+            "spell" : new Spell({id : ""}),
             "classData" : args.classData
         });
         view.render();

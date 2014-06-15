@@ -1,5 +1,5 @@
 <div id="spell-edit-form-container">
-    <input type="hidden" id="spell_id" value="0" />
+    <input type="hidden" id="spell_id" value="" />
     <div id="breadcrumbs">
         <a href="#spells">Edit Class Spells</a> >>
         <a href="#spells/<%= classData.id %>"><%= classData.name %> Spells</a> >>
@@ -59,13 +59,13 @@
     <div class="form-element-container">
         <label class="form-element-label">Range (meters)</label>
         <div class="form-element">
-            <input type="text" id="range" value="0" />
+            <input type="text" id="spell_range" value="0" />
         </div>
     </div>
     <div class="form-element-container">
         <label class="form-element-label">Radius (meters)</label>
         <div class="form-element">
-            <input type="text" id="radius" value="0" />
+            <input type="text" id="spell_radius" value="0" />
         </div>
     </div>
     <div class="form-element-container">

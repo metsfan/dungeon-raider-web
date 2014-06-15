@@ -1,6 +1,6 @@
 <li class="spell-effect-container" id="spell-effect-container-<%= index %>" data-index="<%= index %>">
     <h4>Effect #<span class="spell-index"><%= index+1 %></span></h4>
-    <input type="hidden" id="effect-id-<%= index %>" value="0" />
+    <input type="hidden" id="effect-id-<%= index %>" value="" />
     <div class="form-element-container effect_type-container">
         <label class="form-element-label">Effect Type</label>
         <div class="form-element">
@@ -19,8 +19,8 @@
     <div class="form-element-container dot_duration-container">
         <label class="form-element-label">Duration</label>
         <div class="form-element">
-            Tick every <input id="effect-dot_tick-<%= index %>" size="2" />
-            second for <input id="effect-dot_duration-<%= index %>" size="2"  /> seconds
+            Tick every <input id="effect-dot_tick-<%= index %>" size="2" value="0" />
+            second for <input id="effect-dot_duration-<%= index %>" size="2" value="0" /> seconds
         </div>
     </div>
     <div class="form-element-container duration-container">
@@ -66,6 +66,7 @@
         <label class="form-element-label">Mechanic</label>
         <div class="form-element">
             <select id="effect-mechanic-<%= index %>">
+                <option value="-1"></option>
                 <option>Interrupt</option>
                 <option>Stun</option>
                 <option>Knock back</option>
@@ -77,7 +78,6 @@
                 <option>Immobilize</option>
                 <option>Resurrection</option>
                 <option>Cleanse</option>
-                <option></option>
             </select>
         </div>
     </div>

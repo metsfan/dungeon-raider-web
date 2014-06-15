@@ -28,8 +28,8 @@ var ClassSpellEditView = Backbone.View.extend({
     },
 
     render: function() {
-        if (this.spell.char_class) {
-            this.classData = this.spell.char_class;
+        if (this.spell.class_id) {
+            this.classData = CharClass.classes[this.spell.class_id];
         }
 
         if (!this.classData) {
@@ -61,8 +61,8 @@ var ClassSpellEditView = Backbone.View.extend({
 
                     if (accept) {
                         var button = $(e.target)
-                        var id = parseInt(button.attr("data-id"))
-                        if (id > 0) {
+                        var id = button.attr("data-id")
+                        if (id != "") {
                             var url = "/spell/effect/" + id
                             Network.send(url, "DELETE", {});
                         }
@@ -78,8 +78,8 @@ var ClassSpellEditView = Backbone.View.extend({
 
                     if (accept) {
                         var button = $(e.target)
-                        var id = parseInt(button.attr("data-id"))
-                        if (id > 0) {
+                        var id = button.attr("data-id")
+                        if (id != "") {
                             var url = "/spell/trigger/" + id
                             Network.send(url, "DELETE", {});
                         }
@@ -97,8 +97,8 @@ var ClassSpellEditView = Backbone.View.extend({
                     $("#cooldown").val(this.spell.cooldown * 0.001);
                     $("#spell_type").val(this.spell.spell_type);
                     $("#cast_type").val(this.spell.cast_type);
-                    $("#range").val(this.spell.range);
-                    $("#radius").val(this.spell.radius);
+                    $("#spell_range").val(this.spell.spell_range);
+                    $("#spell_radius").val(this.spell.spell_radius);
                     $("#shape").val(this.spell.shape);
                     $("#self_cast").prop("checked", this.spell.self_cast);
 
@@ -121,7 +121,7 @@ var ClassSpellEditView = Backbone.View.extend({
 
                 $("#add-effect-button").on("click", function() {
                     var i = $("#spell-effects").children().length;
-                    Template.load("admin/spell_effect", { "index" : i, "id" : 0 }, "#spell-effects", {
+                    Template.load("admin/spell_effect", { "index" : i, "id" : "" }, "#spell-effects", {
                         "append" : true,
                         "callback" : function() {
                             $("#effect-effect_type-" + i).change()
@@ -136,27 +136,30 @@ var ClassSpellEditView = Backbone.View.extend({
 
                 $("#spell-submit").on("click", $.proxy(function() {
                     var spell = {
-                        "id" : $("#spell_id").val(),
                         "name" : $("#name").val(),
                         "cast_time" : parseFloat($("#cast_time").val()) * 1000,
                         "cooldown" : parseFloat($("#cooldown").val()) * 1000,
                         "spell_type" : parseInt($("#spell_type").val()),
                         "cast_type" : parseInt($("#cast_type").val()),
-                        "range" : parseFloat($("#range").val()),
-                        "radius" : parseFloat($("#radius").val()),
+                        "spell_range" : parseFloat($("#spell_range").val()),
+                        "spell_radius" : parseFloat($("#spell_radius").val()),
                         "shape" : parseInt($("#shape").val()),
                         "self_cast" : $("#self_cast").prop("checked"),
                         "effects" : [],
                         "triggers" : [],
-                        "char_class" : this.classData,
+                        "class_id": this.classData.id,
                         "icon_url" : this.imageUploader.getImageURL()
                     };
 
+                    var id = $("#spell_id").val();
+                    if (id != "") {
+                        spell.id = id
+                    }
+
                     $(".spell-effect-container").each(function(i, elem) {
                         var index = parseInt($(elem).attr("data-index"))
-                        spell.effects.push({
-                            "id" : parseInt($("#effect-id-" + index).val()),
-                            "spell_id" : parseInt(spell.id),
+                        var effect = {
+                            "spell_id" :spell.id,
                             "effect_type" : parseInt($("#effect-effect_type-" + index).val()),
                             "damage_source" : parseInt($("#effect-damage_source-" + index).val()),
                             "buff_source" : parseInt($("#effect-buff_source-" + index).val()),
@@ -173,22 +176,36 @@ var ClassSpellEditView = Backbone.View.extend({
                             "script_arguments" : $("#effect-script_arguments-" + index).val(),
                             "delta" : parseInt(i),
                             "max_stacks": parseInt($("#effect-max_stacks-" + index).val())
-                        });
+                        };
+
+                        var id = $("#effect-id-" + index).val();
+                        if (id != "") {
+                            effect.id = id
+                        }
+
+                        spell.effects.push(effect)
                     });
 
                     $(".spell-trigger-container").each(function(i, elem) {
-                        spell.triggers.push({
-                            "id" : $("#trigger.id-" + i).val(),
+                        var trigger = {
                             "trigger_spell_id" : $("#trigger-trigger_spell_id-" + i).val(),
                             "trigger_type" : $("#trigger.trigger_type-" + i).val(),
                             "chance" : $("#trigger.chance-" + i).val(),
-                        });
+                        };
+
+                        var id =$("#trigger.id-" + i).val()
+                        if (id != "") {
+                            trigger.id = id
+                        }
+
+                        spell.triggers.push(trigger)
                     });
+
                     this.spell = new Spell(spell);
 
                     Loader.show()
                     $.when(this.spell.save()).then($.proxy(function(data) {
-                        app.navigate("spell/" + data.id, {trigger: true})
+                        app.navigate("spell/" + data["spell"].id, {trigger: true})
                         alert("Save Complete")
 
                         Loader.hide()

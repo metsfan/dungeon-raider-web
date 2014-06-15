@@ -69,7 +69,7 @@ var ClassSpellSelectView = Backbone.View.extend({
                     var elem = $(e.target)
                     var value = elem.val()
                     var parentRow = elem.parents("tr")
-                    var spellId = parseInt(parentRow.attr("data-spell-id"))
+                    var spellId = parentRow.attr("data-spell-id")
 
                     var curSpell = this.spells.find(function(spell) {
                         return spell.id == spellId
